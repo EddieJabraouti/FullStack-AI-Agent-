@@ -5,7 +5,7 @@ from livekit.agents import llm
 import enum 
 from typing import Annotated
 import logging
-from backend.db_driver import DatabaseDriver
+from db_driver import DatabaseDriver
 
 logger = logging.getLogger("user-data")
 logger.setLevel(logging.INFO) 
