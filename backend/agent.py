@@ -10,8 +10,8 @@ from livekit.agents import ( # Import necessary modules from livekit.agents
 from livekit.agents.multimodal import MultimodalAgent
 from livekit.plugins import openai
 from dotenv import load_dotenv
-from api import AssistantFnc
-from prompt import WELCOME_MESSAGE, INSTRUCTIONS, LOOKUP_VIN_MESSAGE
+from backend.api import AssistantFnc
+from backend.prompt import WELCOME_MESSAGE, INSTRUCTIONS, LOOKUP_VIN_MESSAGE
 import os
 
 load_dotenv() # load in .env file to access environment variables

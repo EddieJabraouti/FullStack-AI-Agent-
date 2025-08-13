@@ -41,7 +41,7 @@ class DatabaseDriver: # Class to handle database operations like creating and re
     def create_car(self, vin:str, make:str, model:str, year:int) -> Car: # Create a new car record in the database "-> Car" indicates the return type
        with self._get_connection() as conn: 
           cursor = conn.cursor()
-          cursor.exectute("INSERT INTO CARS (vin, make, model, year) VALUES (?, ?, ?, ?)",
+          cursor.execute("INSERT INTO CARS (vin, make, model, year) VALUES (?, ?, ?, ?)",
                           (vin, make, model, year))
           conn.commit()
           return Car(vin, make, model, year)

@@ -5,7 +5,7 @@ from livekit.agents import llm
 import enum 
 from typing import Annotated
 import logging
-from db_driver import DatabaseDriver
+from backend.db_driver import DatabaseDriver
 
 logger = logging.getLogger("user-data")
 logger.setLevel(logging.INFO) 
@@ -30,7 +30,7 @@ class AssistantFnc(llm.FunctionContext): # Function context for the assistant to
         }
     def get_car_string(self): 
         car_str = ""
-        for key, value in self._car_.item(): 
+        for key, value in self._car_detail.items(): 
             car_str += f"{key}: {value}\n"
 
         return car_str
@@ -50,7 +50,7 @@ class AssistantFnc(llm.FunctionContext): # Function context for the assistant to
         }
 
         car_str = ""
-        for key, value in self._car_.item(): 
+        for key, value in self._car_detail.items(): 
             car_str += f"{key}: {value}\n"
 
         return f"Car details: \n{self.get_car_string()}"
