@@ -11,7 +11,7 @@ from livekit.agents.multimodal import MultimodalAgent
 from livekit.plugins import openai
 from dotenv import load_dotenv
 from api import AssistantFnc
-from prompt import WELCOME_MESSAGE, INSTRUCTIONS
+from prompt import WELCOME_MESSAGE, INSTRUCTIONS, LOOKUP_VIN_MESSAGE
 import os
 
 load_dotenv() # load in .env file to access environment variables
@@ -40,7 +40,35 @@ async def entrypoint(ctx: JobContext):
     )
     session.response.create() #Create a response to the intial message 
 
+    #DESIGNING THE AGENT DECISION TREE
+    @session.on("user_speech_commited")
+    def on_user_speech_commited(msg: llm.ChatMessage): # Handle user speech committed event
+        if isinstance(msg.content, list): 
+            msg.content = "\n".join("[image]" if isinstance(x, llm.ChatImage) else x for x in msg) 
+            #if we are unable to process the image, we will just return the same exact text(x)
 
+        if assistant_fnc.has_car():
+            handle_query(msg)
+        else: 
+            find_profile(msg)
+    
+    def find_profile(msg: llm.ChatMessage): 
+        session.conversation.item.create(
+            llm.ChatMessage(
+                role="system", 
+                content= LOOKUP_VIN_MESSAGE(msg) # Use the LOOKUP_VIN_MESSAGE to prompt for VIN lookup
+            )
+        )
+        session.response.create()
+    
+    def handle_query(msg: llm.ChatMessage): 
+        session.conversation.item.create(
+            llm.ChatMessage(
+                role="user", 
+                content=msg.content
+            )
+        )
+        session.response.create()
 
 if __name__ == "__main__": 
     cli.run_app(WorkerOptions(entrypoint_fnc=entrypoint)) # Run the application with the specified entrypoint function

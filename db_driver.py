@@ -24,10 +24,11 @@ class DatabaseDriver: # Class to handle database operations like creating and re
         conn.close()
 
     def _init_db(self): 
-       with self.get_connection() as conn: 
+       with self._get_connection() as conn: 
           cursor = conn.cursor()
 
-          cursor.execute(""" # Create the CARS table if it does not exist
+            # Create the CARS table if it does not exist
+          cursor.execute("""
                          CREATE TABLE IF NOT EXISTS CARS (
                              vin TEXT PRIMARY KEY,
                              make TEXT NOT NULL,
@@ -37,8 +38,8 @@ class DatabaseDriver: # Class to handle database operations like creating and re
                          """)
           conn.commit()
 
-    def create_car(self, vin:str, make:str, model:str, year:int) -> Car: # Create a new car record in the database
-       with self.get_connection() as conn: 
+    def create_car(self, vin:str, make:str, model:str, year:int) -> Car: # Create a new car record in the database "-> Car" indicates the return type
+       with self._get_connection() as conn: 
           cursor = conn.cursor()
           cursor.exectute("INSERT INTO CARS (vin, make, model, year) VALUES (?, ?, ?, ?)",
                           (vin, make, model, year))
@@ -46,7 +47,7 @@ class DatabaseDriver: # Class to handle database operations like creating and re
           return Car(vin, make, model, year)
        
     def get_car_by_vin(self, vin:str) -> Optional[Car]: # Retrieve a car record by its VIN
-        with self.get_connection() as conn: 
+        with self._get_connection() as conn: 
            cursor = conn.cursor()
            cursor.execute("SELECT * FROM CARS WHERE vin = ?", (vin,)) 
            row = cursor.fetchone() # Fetch the first row that matches the VIN
